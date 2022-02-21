@@ -10,7 +10,9 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
-    "react-scripts": "3.4.1"
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "3.4.1",
+    "react-voice-recorder": "^2.1.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
