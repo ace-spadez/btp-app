@@ -103,7 +103,77 @@ def wavepattern():
   # See /src/components/App.js for frontend call
   
   return jsonify({"imagename":data[2:-1]})
+def differentitate_pitch(pitch,pitch2,pitch_values1,pitch_values2,s1,s2):
+  # Extract selected pitch contour, and
+  # replace unvoiced samples by NaN to not plot
 
+  if s1>s2:
+    pitch_values1=pitch_values1[:s2]
+  if s1<s2:
+    pitch_values2=pitch_values2[:s1]
+  cnt = 0
+  p = np.empty((pitch_values1.size))
+  for i in range(0,pitch_values1.size):
+    p[i]=np.nan
+  for i in range(0,pitch_values1.size):
+    if abs(pitch_values1[i]-pitch_values2[i])>50:
+      #print(pitch_values2[i])
+      p[i]=pitch_values2[i]
+      cnt += 1
+  # print(cnt)
+  # print(p)
+  #plt.plot(pitch2.xs(), pitch_values2, 'o', markersize=5, color='w',label='differences')
+  #plt.plot(pitch2.xs(), pitch_values2, 'o', markersize=2)
+  if s1>s2:
+    plt.plot(pitch2.xs(), pitch_values2, 'o', markersize=5, color='w',label='differences')
+    plt.plot(pitch2.xs(), pitch_values2, 'o', markersize=2)
+    plt.plot(pitch2.xs(), p, 'o', markersize=5, color='w',label='normal')
+    plt.plot(pitch2.xs(), p, 'o', markersize=2)
+    #draw_pitch(pitch)
+  if s1<s2:
+    plt.plot(pitch.xs(), pitch_values1, 'o', markersize=5, color='w',label='differences')
+    plt.plot(pitch.xs(), pitch_values1, 'o', markersize=2)
+    plt.plot(pitch.xs(), p, 'o', markersize=5, color='w',label='normal')
+    plt.plot(pitch.xs(), p, 'o', markersize=2)
+    #draw_pitch(pitch2)
+  
+  plt.grid(False)
+  plt.ylim(0, pitch.ceiling)
+  plt.ylabel("fundamental frequency [Hz]")
+@app.route("/speechpattern",methods=['GET','POST'])
+
+def speechpattern():
+
+  data=request.get_json()
+  snd = parselmouth.Sound(data['filepath1'])
+  pitch = snd.to_pitch()
+  snd2 = parselmouth.Sound(data['filepath2'])
+  pitch2 = snd2.to_pitch()
+
+  pitch_values1 = pitch.selected_array['frequency']
+  pitch_values1[pitch_values1==0] = np.nan
+  pitch_values2 = pitch2.selected_array['frequency']
+  pitch_values2[pitch_values2==0] = np.nan
+  s1=pitch_values1.size
+  s2=pitch_values2.size
+  if s1>s2:
+    draw_pitch(pitch)
+  differentitate_pitch(pitch,pitch2,pitch_values1,pitch_values2,s1,s2)
+  if s1<s2:
+    draw_pitch(pitch2)
+  plt.xlim([snd2.xmin-0.2, snd2.xmax+0.2])
+  
+
+  
+
+  name="image3.png"
+  plt.savefig(name)
+  data=""
+  with open("image3.png", "rb") as image_file:
+    data = format(base64.b64encode(image_file.read()))
+  # See /src/components/App.js for frontend call
+  
+  return jsonify({"imagename":data[2:-1]})
 """
 -------------------------- APP SERVICES ----------------------------
 """
