@@ -10,7 +10,7 @@ const getPort = require('get-port');
 const isDevMode = require('electron-is-dev');
 const { get } = require('axios');
 
-
+const fs = require('fs')
 /**
  * @description - Shuts down Electron & Flask.
  * @param {number} port - Port that Flask server is running on.

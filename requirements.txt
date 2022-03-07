@@ -1,3 +1,8 @@
 Flask
 flask-cors
 pyinstaller
+praat-parselmouth
+numpy
+matplotlib
+seaborn
+tornado

@@ -23,9 +23,10 @@ class Starter {
      * Remains unused here so will be the same as the
      * port used in main.js
      */
-    const port = await getPort({
-      port: getPort.makeRange(3001, 3999)
-    });
+    const port = 3001;
+    // await getPort({
+      // port: getPort.makeRange(3001, 3999)
+    // });
 
     // Kill anything that might using required React port
     spawnSync('npx kill-port 3000', spawnOptions.hideLogs);
