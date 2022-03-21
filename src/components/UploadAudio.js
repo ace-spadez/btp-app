@@ -126,6 +126,29 @@ function UploadAudio(){
         
         
   }
+  const getimage4=async ()=>{
+    
+    const port = ipcRenderer.sendSync('get-port-number');
+    
+     const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filepath:selectedFile })
+    };
+
+    await fetch(`http://0.0.0.0:${port}/highlight`, requestOptions,{'Access-Control-Allow-Origin':'*'})
+    .then(response=>response.json())
+    .then(response => {
+      set_api_success("success")
+      set_gotfinal(response.imagename)
+      })
+    .catch(err=>{
+      console.log(err)
+    })
+
+        
+        
+  }
   return (
     <Fragment>
       <div>
@@ -133,7 +156,7 @@ function UploadAudio(){
       <div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
       
       <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',borderWidth:'2px',borderColor:'black'}}>
-      <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Normal Voice</h4>
+      <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Upload the audio to analyze</h4>
       <input type="file" name="file" accept="audio/wav" onChange={changeHandler} />
       
       {isFilePicked?<button style={{width:'70px',marginBottom:'10px'}}onClick={()=>getimage()}>submit</button>:null}
@@ -160,12 +183,12 @@ function UploadAudio(){
 
 
       <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',borderWidth:'2px',borderColor:'black'}}>
-      <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Parkinson Voice</h4>
+      {/* <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Parkinson Voice</h4>
       <input type="file" name="file" accept="audio/wav" onChange={changeHandler2} />
       
-      {isFilePicked2?<button style={{width:'70px',marginBottom:'10px'}}onClick={()=>getimage2()}>submit</button>:null}
+      {isFilePicked2?<button style={{width:'70px',marginBottom:'10px'}}onClick={()=>getimage2()}>submit</button>:null} */}
       
-      {
+      {/* {
           gotimage2?<span>
       <img src={"data:image/png;base64," + gotimage2} alt="Please Try again" width="300" height="300"></img> 
       <img src={"data:image/png;base64," + gotwave2} alt="Please Try again" width="300" height="300"></img>
@@ -173,7 +196,7 @@ function UploadAudio(){
 
 
           </span>:null
-        }
+        } */}
       {/* {gotimage2?<p>Pitch Pattern</p> :null}
       {gotimage2?<img src={"data:image/png;base64," + gotimage2} alt="Please Try again" width="300" height="300"></img>:null}
       {gotimage2?<p>Wave from</p> :null}
@@ -181,7 +204,7 @@ function UploadAudio(){
        */}
       </div>
       </div>
-      {isFilePicked && isFilePicked2?<button style={{width:'150px',marginBottom:'10px',marginLeft:"100px"}}onClick={()=>getimage3()}>compare speeches</button>:null}
+      {isFilePicked ?<button style={{width:'150px',marginBottom:'10px',marginLeft:"100px"}}onClick={()=>getimage4()}>Highlight</button>:null}
       {gotfinal?<img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="400" height="400"></img>:null}
       </div>
     </Fragment>

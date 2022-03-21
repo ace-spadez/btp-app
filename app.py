@@ -174,6 +174,50 @@ def speechpattern():
   # See /src/components/App.js for frontend call
   
   return jsonify({"imagename":data[2:-1]})
+
+
+@app.route("/highlight",methods=['GET','POST'])
+def highlight():
+
+  data=request.get_json()
+  snd = parselmouth.Sound(data['filepath'])
+  pitch = snd.to_pitch()
+  plt.figure()
+  plt.twinx()
+  
+  pitch_values = pitch.selected_array['frequency']
+  s = pitch_values.size
+  p = np.empty(s)
+  for i in range(s-15):
+    flag = 0
+    for j in range(0,15):
+      if abs(pitch_values[i]-pitch_values[i+j])>5:
+        flag=1
+    if flag == 0:
+      for j in range(0,15):
+        p[i+j]=pitch_values[i+j]
+  pitch_values[pitch_values==0] = np.nan
+  p[p==0] = np.nan
+  plt.plot(pitch.xs(), pitch_values, 'o', markersize=5, color='w')
+  plt.plot(pitch.xs(), pitch_values, 'o', markersize=2)
+  plt.plot(pitch.xs(), p, 'o', markersize=5, color='w')
+  plt.plot(pitch.xs(), p, 'o', markersize=2)
+  plt.grid(False)
+  plt.ylim(0, pitch.ceiling)
+  plt.ylabel("fundamental frequency [Hz]")
+  
+  plt.xlim([snd.xmin-0.2, snd.xmax+0.2])
+
+  name="image4.png"
+  plt.savefig(name)
+  data=""
+  with open("image4.png", "rb") as image_file:
+    data = format(base64.b64encode(image_file.read()))
+  # See /src/components/App.js for frontend call
+  
+  return jsonify({"imagename":data[2:-1]})
+  
+
 """
 -------------------------- APP SERVICES ----------------------------
 """
