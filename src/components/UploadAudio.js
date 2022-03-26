@@ -1,8 +1,13 @@
 import React,{Fragment,useEffect,useState} from  'react';
 import {Recorder} from 'react-voice-recorder'
 import 'react-voice-recorder/dist/index.css'
+import Button from '@mui/material/Button';
+import { FileUploader } from "react-drag-drop-files";
+import { CircularProgress } from '@mui/material';
+
 const { ipcRenderer } = window.require('electron');
 
+const fileTypes = ["wav"];
 // export default function Home() {
 //     return (
 //       <main style={{ padding: "1rem 0" }}>
@@ -13,6 +18,8 @@ const { ipcRenderer } = window.require('electron');
 function UploadAudio(){
   const [flask_data,set_flask_data]=useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [highlighting, setHighlighting] = useState(false);
   const [selectedFile2, setSelectedFile2] = useState(null);
 	const [isFilePicked, setIsFilePicked] = useState(false);
   const [isFilePicked2, setIsFilePicked2] = useState(false);
@@ -25,7 +32,14 @@ function UploadAudio(){
   const [gotfinal,set_gotfinal] = useState(null);
 
   const [api_success,set_api_success]=useState("");
+  const [file, setFile] = useState(null);
+  const handleChange = (file) => {
+    setFile(file);
+		setSelectedFile(file.path);
+		setIsFilePicked(true);
 
+
+  };
   const changeHandler = (event) => {
     console.log(event.target.files[0]);
 		setSelectedFile(event.target.files[0].path);
@@ -40,7 +54,7 @@ function UploadAudio(){
   const getimage=async ()=>{
     
     const port = ipcRenderer.sendSync('get-port-number');
-    
+    setAnalyzing(true);
      const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -64,6 +78,9 @@ function UploadAudio(){
         .catch(err=>{
           console.log(err)
         })
+
+
+        setAnalyzing(false);
         
         
   }
@@ -127,6 +144,8 @@ function UploadAudio(){
         
   }
   const getimage4=async ()=>{
+    setHighlighting(true);
+    
     
     const port = ipcRenderer.sendSync('get-port-number');
     
@@ -146,66 +165,59 @@ function UploadAudio(){
       console.log(err)
     })
 
-        
+        setHighlighting(false);
         
   }
   return (
     <Fragment>
       <div>
-      <h3 style={{color:'blue',marginTop:"10px",fontWeight:'bold',textAlign:'center'}} >Intonation Profile</h3>
+      {/* <h3 style={{color:'black',marginTop:"10px",fontWeight:'bold',textAlign:'center'}} >Upload the Audio to Analyze</h3> */}
+      <div style={{width:'100%',alignContent:'center',display:'flex',justifyContent:'center'}}>
+<div style={{width:'500px',marginTop:'50px'}}>
+        <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
+        </div>
+        </div>
+
       <div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
+        
       
       <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',borderWidth:'2px',borderColor:'black'}}>
-      <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Upload the audio to analyze</h4>
-      <input type="file" name="file" accept="audio/wav" onChange={changeHandler} />
+      {/* <h4 style={{color:'grey',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Upload the audio to analyze</h4> */}
+      {/* <input type="file" name="file" accept="audio/wav" onChange={changeHandler} /> */}
       
-      {isFilePicked?<button style={{width:'70px',marginBottom:'10px'}}onClick={()=>getimage()}>submit</button>:null}
+      {/* {isFilePicked?<button style={{marginBottom:'10px',borderRadius:'5px',marginTop:'10px',backgroundColor:'black',color:'white',textDecoration:'none',fontWeight:'bold',padding:'5px 20px'}}onClick={()=>getimage()}>Analyze</button>:null} */}
+      {isFilePicked && !analyzing?<Button variant="contained" style={{marginBottom:'10px',padding:'5px 20px'}}onClick={()=>getimage()}>Analyze</Button>:null}
+      {isFilePicked && analyzing?<Button style={{marginBottom:'10px',padding:'5px 20px'}}onClick={()=>getimage()}><CircularProgress color="success"></CircularProgress></Button>:null}
       
       
       <div>
         {
           gotimage?<span>
-      <img src={"data:image/png;base64," + gotimage} alt="Please Try again" width="300" height="300"></img> 
-      <img src={"data:image/png;base64," + gotwave} alt="Please Try again" width="300" height="300"></img>
+      <img src={"data:image/png;base64," + gotimage} alt="Please Try again" width="800" height="400"></img> 
+      <br></br>
+      <img src={"data:image/png;base64," + gotwave} alt="Please Try again" width="800" height="400"></img>
 
 
 
           </span>:null
         }
-      {/* <span>{gotimage?<p>Pitch Pattern</p> :null}
-      {gotimage?<img src={"data:image/png;base64," + gotimage} alt="Please Try again" width="300" height="300"></img> :null}
-      </span>   
-      <span style={{float:'right'}}> {gotimage?<p>Wave Form</p> :null}
-  {gotimage?<img src={"data:image/png;base64," + gotwave} alt="Please Try again" width="300" height="300"></img> :null}</span> */}
+     
   </div>
       </div>
 
 
 
       <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',borderWidth:'2px',borderColor:'black'}}>
-      {/* <h4 style={{color:'blue',marginTop:"1px",fontWeight:'bold',textAlign:'center'}} >Parkinson Voice</h4>
-      <input type="file" name="file" accept="audio/wav" onChange={changeHandler2} />
+     
+       {isFilePicked & !highlighting ?<Button variant="contained" style={{}} onClick={()=>getimage4()}>Highlight</Button>:null}
+       {isFilePicked & highlighting ?<Button style={{}} onClick={()=>getimage4()}><CircularProgress color="success"></CircularProgress></Button>:null}
+      {gotfinal?<img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="800" height="800"></img>:null}
       
-      {isFilePicked2?<button style={{width:'70px',marginBottom:'10px'}}onClick={()=>getimage2()}>submit</button>:null} */}
       
-      {/* {
-          gotimage2?<span>
-      <img src={"data:image/png;base64," + gotimage2} alt="Please Try again" width="300" height="300"></img> 
-      <img src={"data:image/png;base64," + gotwave2} alt="Please Try again" width="300" height="300"></img>
-
-
-
-          </span>:null
-        } */}
-      {/* {gotimage2?<p>Pitch Pattern</p> :null}
-      {gotimage2?<img src={"data:image/png;base64," + gotimage2} alt="Please Try again" width="300" height="300"></img>:null}
-      {gotimage2?<p>Wave from</p> :null}
-      {gotimage2?<img src={"data:image/png;base64," + gotwave2} alt="Please Try again" width="300" height="300"></img>:null}
-       */}
       </div>
       </div>
-      {isFilePicked ?<button style={{width:'150px',marginBottom:'10px',marginLeft:"100px"}}onClick={()=>getimage4()}>Highlight</button>:null}
-      {gotfinal?<img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="400" height="400"></img>:null}
+      {/* {isFilePicked ?<button style={{width:'150px',marginBottom:'10px',marginLeft:"100px"}}onClick={()=>getimage4()}>Highlight</button>:null}
+      {gotfinal?<img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="400" height="400"></img>:null} */}
       </div>
     </Fragment>
   );

@@ -3,6 +3,9 @@
   "description": "Started template for Electron, React, Python app",
   "dependencies": {
     "@cleandersonlobo/react-mic": "^1.2.0",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.5.2",
     "@reduxjs/toolkit": "^1.1.0",
     "axios": "^0.21.1",
     "electron-is-dev": "^1.2.0",
@@ -13,6 +16,7 @@
     "react-app-rewired": "^2.2.1",
     "react-audio-recorder": "^2.2.0",
     "react-dom": "^16.13.1",
+    "react-drag-drop-files": "^2.3.4",
     "react-redux": "^7.2.0",
     "react-router-dom": "^6.2.1",
     "react-scripts": "3.4.1",
