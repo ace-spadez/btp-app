@@ -1,5 +1,6 @@
 
 import base64
+import json
 import sys
 import wave
 from flask import Flask, jsonify, request
@@ -55,8 +56,16 @@ def example():
   pitch = snd.to_pitch()
   plt.figure()
   plt.twinx()
+  x=pitch.xs()
+  y=pitch.selected_array['frequency']
+  dataPoints=[]
+  for i in range(len(y)):
+    if(y[i]!=0):
+      dataPoints.append({"x":x[i],"y":y[i]})
+  print(dataPoints)
   draw_pitch(pitch)
   plt.xlim([snd.xmin, snd.xmax])
+
   name="image1.png"
   plt.savefig(name)
   data=""
@@ -64,7 +73,7 @@ def example():
     data = format(base64.b64encode(image_file.read()))
   # See /src/components/App.js for frontend call
   
-  return jsonify({"imagename":data[2:-1]})
+  return {"dataPoints":dataPoints}
 
 @app.route("/wavepattern",methods=['GET','POST'])
 
@@ -186,6 +195,13 @@ def highlight():
   plt.twinx()
   
   pitch_values = pitch.selected_array['frequency']
+  x=pitch.xs()
+  y=pitch.selected_array['frequency']
+  dataPoints=[]
+  for i in range(len(y)):
+    if(y[i]!=0):
+      dataPoints.append({"x":x[i],"y":y[i]})
+  
   s = pitch_values.size
   p = np.empty(s)
   for i in range(s-15):
@@ -197,7 +213,16 @@ def highlight():
       for j in range(0,15):
         p[i+j]=pitch_values[i+j]
   pitch_values[pitch_values==0] = np.nan
+  dataPoints2=[]
+  x=pitch.xs()
+  y=p
+  for i in range(len(y)):
+    if(y[i]!=0):
+      dataPoints2.append({"x":x[i],"y":y[i]})
+
   p[p==0] = np.nan
+  
+  
   plt.plot(pitch.xs(), pitch_values, 'o', markersize=5, color='w')
   plt.plot(pitch.xs(), pitch_values, 'o', markersize=2)
   plt.plot(pitch.xs(), p, 'o', markersize=5, color='w')
@@ -215,7 +240,7 @@ def highlight():
     data = format(base64.b64encode(image_file.read()))
   # See /src/components/App.js for frontend call
   
-  return jsonify({"imagename":data[2:-1]})
+  return jsonify({"normal":dataPoints,"highlight":dataPoints2})
   
 
 """
