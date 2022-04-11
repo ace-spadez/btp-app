@@ -10,6 +10,8 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 const { ipcRenderer } = window.require('electron');
 
 const fileTypes = ["wav"];
+
+let charts2 =[]
 // export default function Home() {
 //     return (
 //       <main style={{ padding: "1rem 0" }}>
@@ -32,7 +34,7 @@ function UploadAudio() {
   const [gotwave2, set_gotwave2] = useState(null);
   const [gotoptions, set_gotoptions] = useState(null);
   const [gotoptions2, set_gotoptions2] = useState(null);
-  const [charts2,set_charts]=useState([]);
+  // const [charts2,set_charts]=useState([]);
 
 
   const syncHandler = (e) => {
@@ -202,7 +204,8 @@ function UploadAudio() {
 
   const updatecharts=(ref)=>{
     console.log("before " + charts2.length)
-    set_charts([...charts2,ref])
+    // set_charts([...charts2,ref])
+    charts2.push(ref)
     console.log("after "+charts2.length)
   }
   
@@ -249,14 +252,16 @@ function UploadAudio() {
 
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
-            <br></br>
-            <br></br>
+          
             {isFilePicked && !analyzing ? <Button variant="contained" style={{ marginBottom: '10px', padding: '5px 20px' }} onClick={() => getimage()}>WavePattern</Button> : null}
+            
             {isFilePicked && analyzing ? <Button style={{ marginBottom: '10px', padding: '5px 20px' }} onClick={() => getimage()}><CircularProgress color="success"></CircularProgress></Button> : null}
+            {isFilePicked & !highlighting ? <Button variant="contained" style={{}} onClick={() => getimage4()}>Highlight</Button> : null}
+            {isFilePicked & highlighting ? <Button style={{}} onClick={() => getimage4()}><CircularProgress color="success"></CircularProgress></Button> : null}
 
 
             <div>
-              {gotoptions2?<div style={{ width: '1000px' }}>
+              {gotoptions2?<div style={{ width: '1000px',height:'300px' }}>
           <CanvasJSChart  options={options2} onRef={ref => updatecharts(ref)}/>
         </div> :null}
 
@@ -264,14 +269,13 @@ function UploadAudio() {
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
-            <br></br>
-            <br></br>
-            {isFilePicked & !highlighting ? <Button variant="contained" style={{}} onClick={() => getimage4()}>Highlight</Button> : null}
+          
+            
             <br></br>
             {isFilePicked & highlighting ? <Button style={{}} onClick={() => getimage4()}><CircularProgress color="success"></CircularProgress></Button> : null}
-            {gotfinal ? <img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="600" height="400"></img> : null}
+            {gotfinal ? <img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="600" height="350"></img> : null}
             
-                {gotoptions?<div style={{ width: '1000px' }}>
+                {gotoptions?<div style={{ width: '1000px',height:'400px' }}>
                   <CanvasJSChart options={options} onRef={ref => updatecharts(ref)} />
                 </div>:null}
             
