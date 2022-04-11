@@ -6,7 +6,8 @@ import wave
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import parselmouth
-
+import pandas as pd
+from scipy.signal import find_peaks
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -46,6 +47,9 @@ def draw_pitch(pitch):
     plt.ylim(0, pitch.ceiling)
     plt.ylabel("fundamental frequency [Hz]")
 
+
+
+
 # Remove and replace with your own
 @app.route("/example",methods=['GET','POST'])
 
@@ -75,6 +79,9 @@ def example():
   
   return {"dataPoints":dataPoints}
 
+
+
+
 @app.route("/wavepattern",methods=['GET','POST'])
 
 def wavepattern():
@@ -89,15 +96,29 @@ def wavepattern():
   raw = wave.open(path)
 
   signal = raw.readframes(-1)
+ 
   signal = np.frombuffer(signal, dtype ="int16")
   f_rate = raw.getframerate()
+ 
   time = np.linspace(
       0,
       len(signal) / f_rate,
       num = len(signal)
   )
-
-
+  
+  dataPoints=[]
+  
+  cnt=0
+  cur_x=0
+  cur_y=0
+  for i in range(len(signal)):
+    if i%100==0:
+      dataPoints.append({"x":cur_x/100,"y":cur_y/100})
+      cur_x=0
+      cur_y=0
+    else:
+      cur_x+=float(time[i])
+      cur_y+=float(signal[i])
   plt.ylabel("fundamental frequency [Hz]")
   plt.plot(time, signal,color="red")
   
@@ -110,8 +131,11 @@ def wavepattern():
   with open("image2.png", "rb") as image_file:
     data = format(base64.b64encode(image_file.read()))
   # See /src/components/App.js for frontend call
-  
-  return jsonify({"imagename":data[2:-1]})
+  # print(dataPoints)
+  return jsonify({"dataPoints":dataPoints})
+
+
+
 def differentitate_pitch(pitch,pitch2,pitch_values1,pitch_values2,s1,s2):
   # Extract selected pitch contour, and
   # replace unvoiced samples by NaN to not plot

@@ -31,10 +31,43 @@ function UploadAudio() {
   const [gotwave, set_gotwave] = useState(null);
   const [gotwave2, set_gotwave2] = useState(null);
   const [gotoptions, set_gotoptions] = useState(null);
+  const [gotoptions2, set_gotoptions2] = useState(null);
+  const [charts2,set_charts]=useState([]);
+
+
+  const syncHandler = (e) => {
+    console.log("came here")
+    console.log(charts2)
+    for (var i = 0; i < charts2.length; i++) {
+      var chart = charts2[i];
+
+      if (!chart.options.axisX) chart.options.axisX = {};
+
+      if (!chart.options.axisY) chart.options.axisY = {};
+
+      if (e.trigger === "reset") {
+        chart.options.axisX.viewportMinimum = chart.options.axisX.viewportMaximum = null;
+        chart.options.axisY.viewportMinimum = chart.options.axisY.viewportMaximum = null;
+        chart.render()
+
+      } else if (chart !== e.chart) {
+        console.log("not same bro")
+        chart.options.axisX.viewportMinimum = e.axisX[0].viewportMinimum;
+        chart.options.axisX.viewportMaximum = e.axisX[0].viewportMaximum;
+
+        chart.options.axisY.viewportMinimum = e.axisY[0].viewportMinimum;
+        chart.options.axisY.viewportMaximum = e.axisY[0].viewportMaximum;
+        chart.render()
+
+      }
+    }
+  }
+
   const [options, set_options] = useState({
     theme: "light",
     animationEnabled: true,
     zoomEnabled: true,
+    rangeChanged: syncHandler,
     title: {
       text: "Intonation Profile"
     },
@@ -59,23 +92,7 @@ function UploadAudio() {
       markerSize: 5,
       toolTipContent: "Time: {x}sec Frequency: {y}Hz",
       dataPoints: [
-        { x: 14.2, y: 215 },
-        { x: 12.9, y: 175 },
-        { x: 16.4, y: 325 },
-        { x: 26.9, y: 635 },
-        { x: 32.5, y: 464 },
-        { x: 22.1, y: 522 },
-        { x: 19.4, y: 412 },
-        { x: 25.1, y: 614 },
-        { x: 34.9, y: 374 },
-        { x: 28.7, y: 625 },
-        { x: 23.4, y: 544 },
-        { x: 31.4, y: 502 },
-        { x: 40.8, y: 262 },
-        { x: 37.4, y: 312 },
-        { x: 42.3, y: 202 },
-        { x: 39.1, y: 302 },
-        { x: 17.2, y: 408 }
+        
       ]
     },
     {
@@ -84,28 +101,59 @@ function UploadAudio() {
       toolTipContent: "Temperature: {x}°CSales: {y}",
       markerSize: 7,
       dataPoints: [
-        { x: 14.2, y: 215 },
-        { x: 12.9, y: 175 },
-        { x: 16.4, y: 325 },
-        { x: 26.9, y: 635 },
-        { x: 32.5, y: 464 },
-        { x: 22.1, y: 522 },
-        { x: 19.4, y: 412 },
-        { x: 25.1, y: 614 },
-        { x: 34.9, y: 374 },
-        { x: 28.7, y: 625 },
-        { x: 23.4, y: 544 },
-        { x: 31.4, y: 502 },
-        { x: 40.8, y: 262 },
-        { x: 37.4, y: 312 },
-        { x: 42.3, y: 202 },
-        { x: 39.1, y: 302 },
-        { x: 17.2, y: 408 }
+        
       ]
     }
 
     ]
   })
+
+  const [options2, set_options2] = useState({
+    theme: "light",
+    animationEnabled: true,
+    zoomEnabled: true,
+    rangeChanged: syncHandler,
+    title: {
+      text: "WavePattern"
+    },
+    axisX: {
+      title: "Time (in sec)",
+      suffix: "sec",
+      crosshair: {
+        enabled: true,
+        snapToDataPoint: true
+      }
+    },
+    axisY: {
+      title: "Frequency [Hz]",
+      crosshair: {
+        enabled: true,
+        snapToDataPoint: true
+      }
+    },
+    data: [{
+      type: "line",
+      color: "red",
+      toolTipContent: "Time: {x}sec Frequency: {y}Hz",
+      dataPoints: [
+        
+      ]
+    },
+    {
+      type: "scatter",
+      color: "orange",
+      toolTipContent: "Temperature: {x}°CSales: {y}",
+      markerSize: 7,
+      dataPoints: [
+        
+      ]
+    }
+
+    ]
+  })
+
+
+  
 
   const [gotfinal, set_gotfinal] = useState(null);
 
@@ -118,15 +166,7 @@ function UploadAudio() {
 
 
   };
-  const changeHandler = (event) => {
-    console.log(event.target.files[0]);
-    setSelectedFile(event.target.files[0].path);
-    setIsFilePicked(true);
-  };
-  const changeHandler2 = (event) => {
-    setSelectedFile2(event.target.files[0].path);
-    setIsFilePicked2(true);
-  };
+  
 
 
   const getimage = async () => {
@@ -138,24 +178,17 @@ function UploadAudio() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filepath: selectedFile })
     };
-    await fetch(`http://0.0.0.0:${port}/example`, requestOptions, { 'Access-Control-Allow-Origin': '*' })
-      .then(response => response.json())
-      .then(response => {
-        set_api_success("success")
-        let temp_options = { ...options }
-        temp_options["data"][0]["dataPoints"] = response.dataPoints
-        set_options(temp_options)
-
-        console.log(response.dataPoints)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    
     await fetch(`http://0.0.0.0:${port}/wavepattern`, requestOptions, { 'Access-Control-Allow-Origin': '*' })
       .then(response => response.json())
       .then(response => {
+        console.log(response)
         set_api_success("success")
-        set_gotwave(response.imagename)
+        let temp_options = { ...options2 }
+        temp_options["data"][0]["dataPoints"] = response.dataPoints
+        set_options2(temp_options)
+        set_gotoptions2(temp_options)
+        
       })
       .catch(err => {
         console.log(err)
@@ -167,64 +200,12 @@ function UploadAudio() {
 
   }
 
-  const getimage2 = async () => {
-
-    const port = ipcRenderer.sendSync('get-port-number');
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filepath: selectedFile2 })
-    };
-
-    await fetch(`http://0.0.0.0:${port}/example`, requestOptions, { 'Access-Control-Allow-Origin': '*' })
-      .then(response => response.json())
-      .then(response => {
-        set_api_success("success")
-        set_gotimage2(response.imagename)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
-
-    await fetch(`http://0.0.0.0:${port}/wavepattern`, requestOptions, { 'Access-Control-Allow-Origin': '*' })
-      .then(response => response.json())
-      .then(response => {
-        set_api_success("success")
-        set_gotwave2(response.imagename)
-      })
-      .catch(err => {
-        set_api_success(JSON.stringify(err.json()))
-      })
-
-
-
-
+  const updatecharts=(ref)=>{
+    console.log("before " + charts2.length)
+    set_charts([...charts2,ref])
+    console.log("after "+charts2.length)
   }
-  const getimage3 = async () => {
-
-    const port = ipcRenderer.sendSync('get-port-number');
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filepath1: selectedFile, filepath2: selectedFile2 })
-    };
-
-    await fetch(`http://0.0.0.0:${port}/speechpattern`, requestOptions, { 'Access-Control-Allow-Origin': '*' })
-      .then(response => response.json())
-      .then(response => {
-        set_api_success("success")
-        set_gotfinal(response.imagename)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
-
-
-  }
+  
   const getimage4 = async () => {
     setHighlighting(true);
 
@@ -266,22 +247,7 @@ function UploadAudio() {
 
         <div >
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
-            <br></br>
-            <br></br>
-            {isFilePicked & !highlighting ? <Button variant="contained" style={{}} onClick={() => getimage4()}>Highlight</Button> : null}
-            <br></br>
-            {isFilePicked & highlighting ? <Button style={{}} onClick={() => getimage4()}><CircularProgress color="success"></CircularProgress></Button> : null}
-            {gotfinal ? <img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="600" height="400"></img> : null}
-            {
-              gotoptions ?
-                <div style={{ width: '1000px' }}>
-                  <CanvasJSChart options={options} />
-                </div> : null
-            }
-
-
-          </div>
+          
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
             <br></br>
             <br></br>
@@ -290,11 +256,30 @@ function UploadAudio() {
 
 
             <div>
-              {gotwave ? <img src={"data:image/png;base64," + gotwave} alt="Please Try again" width="1000" height="400"></img> : null}
+              {gotoptions2?<div style={{ width: '1000px' }}>
+          <CanvasJSChart  options={options2} onRef={ref => updatecharts(ref)}/>
+        </div> :null}
 
 
             </div>
           </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
+            <br></br>
+            <br></br>
+            {isFilePicked & !highlighting ? <Button variant="contained" style={{}} onClick={() => getimage4()}>Highlight</Button> : null}
+            <br></br>
+            {isFilePicked & highlighting ? <Button style={{}} onClick={() => getimage4()}><CircularProgress color="success"></CircularProgress></Button> : null}
+            {gotfinal ? <img src={"data:image/png;base64," + gotfinal} alt="Please Try again" width="600" height="400"></img> : null}
+            
+                {gotoptions?<div style={{ width: '1000px' }}>
+                  <CanvasJSChart options={options} onRef={ref => updatecharts(ref)} />
+                </div>:null}
+            
+
+
+          </div>
+
+          
 
 
         </div>
@@ -309,6 +294,7 @@ function UploadAudio() {
         <br></br>
         <br></br>
         <br></br>
+        
       </div>
     </Fragment>
   );
