@@ -96,7 +96,9 @@ export  default class   Home extends React.Component{
    
     render() {
        
-        return <div className={styles.area}>
+        return <div>
+          <h1 style={{marginLeft:"100px",marginTop:"100px"}}>RECORD AUDIO</h1>
+        <div className={styles.area}>
           <div >
         <ReactMic style={{width:'200px'}}
           record = {this.state.record}
@@ -118,6 +120,7 @@ export  default class   Home extends React.Component{
 
 :null}
 
+        </div>
         </div>
         
        

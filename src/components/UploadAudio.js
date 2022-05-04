@@ -244,6 +244,7 @@ function UploadAudio() {
         {/* <h3 style={{color:'black',marginTop:"10px",fontWeight:'bold',textAlign:'center'}} >Upload the Audio to Analyze</h3> */}
         <div style={{ width: '100%', alignContent: 'center', display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '500px', marginTop: '50px' }}>
+            <h1>INTONATION</h1>
             <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
           </div>
         </div>
@@ -253,10 +254,10 @@ function UploadAudio() {
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderWidth: '2px', borderColor: 'black' }}>
           
-            {isFilePicked && !analyzing ? <Button variant="contained" style={{ marginBottom: '10px', padding: '5px 20px' }} onClick={() => getimage()}>WavePattern</Button> : null}
+            {isFilePicked && !analyzing ? <Button variant="contained" style={{ marginBottom: '10px', marginTop:"10px", padding: '5px 20px' }} onClick={() => getimage()}>WavePattern</Button> : null}
             
             {isFilePicked && analyzing ? <Button style={{ marginBottom: '10px', padding: '5px 20px' }} onClick={() => getimage()}><CircularProgress color="success"></CircularProgress></Button> : null}
-            {isFilePicked & !highlighting ? <Button variant="contained" style={{}} onClick={() => getimage4()}>Highlight</Button> : null}
+            {isFilePicked & !highlighting ? <Button variant="contained" style={{marginBottom:"10px"}} onClick={() => getimage4()}>Highlight</Button> : null}
             {isFilePicked & highlighting ? <Button style={{}} onClick={() => getimage4()}><CircularProgress color="success"></CircularProgress></Button> : null}
 
 

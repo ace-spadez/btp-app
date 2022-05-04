@@ -1,20 +1,14 @@
 import React from  'react';
-const { ipcRenderer } = window.require('electron');
-const fs = require('fs')
-const os = require('os')
-const dir = `${os.homedir()}/Downloads/tests`
+import mentor from 'mentor.jpg';
 
-export  default class   Listt extends React.Component{
+const { ipcRenderer } = window.require('electron');
+
+
+export  default class   List extends React.Component{
     constructor(){
         super();
         this.state = {
-              isFilePicked:false,
-              api_success : "",
-              gotimage: null,
-              gotwave: null,
-              selectedFile: null,
-              uploadedFile: null,
-              files:[]
+             
         }
 
     }
@@ -22,12 +16,10 @@ export  default class   Listt extends React.Component{
     
     render() {
        
-        return <div>
-            {
-                this.state.files.map(e=>{
-                    return <div>{e}</div>;
-                })
-                }
+        return <div >
+            {/* Hello im one of those creators. Anvay Karmore. The other one is Kranthi Kumar and our beloved mentor is Hasvitha Nadimpalli. */}
+
+            {/* <img src={mentor} style={{width:"100px",height:"100px",borderRadius:"50%"}}></img> */}
           </div>
         
        
