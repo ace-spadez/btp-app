@@ -39,7 +39,7 @@ class Packager {
 
       package: [
         `--src ${path('../dist/linux/app-linux-x64/')}`,
-        'electron-react-python-template',
+        'app',
         `--dest ${path('../dist/linux/setup')}`,
         '--arch amd64',
         `--icon ${path('../utilities/deb/images/icon.ico')}`,
@@ -80,7 +80,7 @@ class Packager {
 
       package: [
         path('../dist/mac/app-darwin-x64/app.app'),
-        'electron-react-python-template',
+        'app',
         `--out=${path('../dist/mac/setup')}`,
         `--icon=${path('../utilities/dmg/images/icon.icns')}`,
         `--background=${path('../utilities/dmg/images/background.png')}`,
@@ -135,7 +135,7 @@ class Packager {
       description: 'Example app',
       exe: 'app',
       manufacturer: 'Example Manufacturer',
-      name: 'electron-react-python-template',
+      name: 'app',
       outputDirectory: path('../dist/windows/setup'),
       ui: {
         chooseDirectory: true,

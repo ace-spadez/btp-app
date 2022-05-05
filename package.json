@@ -64,7 +64,8 @@
   "homepage": "./",
   "license": "MIT",
   "main": "main.js",
-  "name": "electron-react-python-template",
+  "name": "app",
+  "productName": "app",
   "private": true,
   "scripts": {
     "build": "node ./scripts/dispatch build all",

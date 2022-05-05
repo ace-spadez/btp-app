@@ -37,7 +37,7 @@ function App() {
     <Fragment  className={styles.all}>
           <BrowserRouter>
 
-      <Titlebar />
+      <Titlebar />  
       <div className={styles.topbar}>
   
         <img src={ logo192 } className={ styles['app-logo'] } alt="logo" />
@@ -57,7 +57,7 @@ function App() {
         <div  className={styles.body}>
 
           <Routes>
-      <Route path="/" element={<Listt/>}/>
+      <Route path="/" element={<Listt setValue={setValue}/>}/>
       <Route path="/record" element={<Home/>} />
       <Route path="/upload"  element={<UploadAudio/>}/>
     </Routes>
